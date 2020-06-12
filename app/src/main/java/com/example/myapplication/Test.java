@@ -1,28 +1,49 @@
 package com.example.myapplication;
 
-import android.annotation.SuppressLint;
-import android.util.Base64;
-import android.util.Log;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-@SuppressLint("NewApi")
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+
+
 public class Test {
+
+    int a=1;
+
     public static void main(String []args){
         Map<Integer, String> map=new ConcurrentHashMap<>();
-
-        map.put(1,"one");
-        map.put(2,"two");
-        map.put(3,"three");
-        map.put(4,"four");
-        map.put(5,"five");
-        map.put(6,"six");
+//        int s=a;
+//        map.put(1,"one");
+//        map.put(2,"two");
+//        map.put(3,"three");
+//        map.put(4,"four");
+//        map.put(5,"five");
+//        map.put(6,"six");
 //        test(map);
 
+        testLinkTask();
+        Observable.interval(10, TimeUnit.SECONDS).retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
+            @Override
+            public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
+                return null;
+            }
+        }).subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long aLong) throws Exception {
 
+            }
+        });
+
+
+        Observable.create()
     }
 
 
@@ -48,9 +69,20 @@ public class Test {
         System.out.print("map = " + map);
     }
 
-
-
-
+    public static void testLinkTask(){
+        TaskList taskList=new TaskList();
+        for(int i=0;i<10;i++){
+            Task tmp=new Task(i+1);
+            taskList.addTask(tmp);
+        }
+        taskList.setTaskCallBack(new Task.ITaskCallBack() {
+            @Override
+            public void complete() {
+                System.out.println("task complete");
+            }
+        });
+        taskList.start();
+    }
 
 
 }
